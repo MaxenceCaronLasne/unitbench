@@ -1,0 +1,23 @@
+#+TITLE= unitbench
+
+Working with Migen.
+
+- JSON test file
+- Migen Module class
+- Arguments
+- Specials: memory generator
+  
+TestSupervisorModule:
+  UnitTestModule:
+
+* TODOs
+  
+** DONE Build env
+
+** TODO Build test suite
+
+** TODO Designing super-module base
+
+** TODO Generate super-module
+
+** TODO Design API
