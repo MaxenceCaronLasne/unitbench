@@ -1,5 +1,6 @@
 from migen import *
 
+
 class Counter(Module):
     def __init__(self, n):
         # Output
@@ -9,11 +10,12 @@ class Counter(Module):
 
         self.sync += [
             If(self.o == n - 1,
-                self.o.eq(0)
-            ).Else(
+                self.o.eq(0))
+            .Else(
                 self.o.eq(self.o + 1)
             )
         ]
+
 
 class SuperTestModule(Module):
     """Migen super-module for a single test.
@@ -37,10 +39,9 @@ class SuperTestModule(Module):
         res = []
 
         for signame, value in i_decl.items():
-            res += [ getattr(self.dut, signame).eq(value) ]
+            res += [getattr(self.dut, signame).eq(value)]
 
         return res
-
 
     def make_outputs_checker(self, o_decl):
         """Make Migen statements for checking dut output signals.
@@ -55,7 +56,8 @@ class SuperTestModule(Module):
         res = []
 
         for signame, value in o_decl.items():
-            res += [ self.test_outs[signame].eq(getattr(self.dut, signame) != value) ]
+            res += [self.test_outs[signame]
+                    .eq(getattr(self.dut, signame) != value)]
 
         return res
 
@@ -77,7 +79,7 @@ class SuperTestModule(Module):
         return res
 
     def __init__(self, testattr, dut_class, args=None, specials=None):
-        self.i_go = Signal() # Unused for now.
+        self.i_go = Signal()  # Unused for now.
 
         # Outputs
 
@@ -95,7 +97,8 @@ class SuperTestModule(Module):
 
         #: Signal(n): concatenation of all signals contained in
         #             `self.test_outs`.
-        self.cat_test_outs = Cat([signal for _, signal in self.test_outs.items()])
+        self.cat_test_outs = Cat(
+            [signal for _, signal in self.test_outs.items()])
 
         # Sub-modules
 
@@ -129,15 +132,14 @@ class SuperTestModule(Module):
         self.sync += Case(counter.o, cases)
 
         # `self.o_over` control
-        self.comb += [ self.o_over.eq(counter.o == tick_count + 2) ]
+        self.comb += [self.o_over.eq(counter.o == tick_count + 2)]
 
         # `self.o_success` control
         self.comb += [
             If(self.o_success == 1,
-               self.o_success.eq(self.cat_test_outs == 0)
-            ).Else(
-                self.o_success.eq(0)
-            )
+               self.o_success.eq(self.cat_test_outs == 0))
+            .Else(
+                self.o_success.eq(0))
         ]
 
 

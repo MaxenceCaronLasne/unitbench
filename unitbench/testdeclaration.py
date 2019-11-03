@@ -1,6 +1,7 @@
 import json
 import collections
 
+
 class TestAttributes():
     """Attributes of a single test.
 
@@ -94,6 +95,6 @@ class TestsDeclaration():
         res = []
 
         for t in self.data["tests"]:
-            res += [ TestAttributes(t) ]
+            res += [TestAttributes(t)]
 
         return res

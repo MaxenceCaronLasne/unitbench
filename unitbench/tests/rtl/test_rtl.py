@@ -4,6 +4,7 @@ from ...testmodule import SuperTestModule
 from ..modules.example import ExampleModule
 from migen import *
 
+
 class MockTestAttributes():
     def __init__(self, tag, io_decl, ticks_after_inputs, ticks_after_outputs):
         self.tag = tag
@@ -11,21 +12,6 @@ class MockTestAttributes():
         self.ticks_after_inputs = ticks_after_inputs
         self.ticks_after_outputs = ticks_after_outputs
 
-def make_test_module(testattr, dut_class, args=None, specials=None):
-    return SuperTestModule(testattr, dut_class, args, specials)
-
-def sim_test_module(mod, testattr, is_meant_to_succeed):
-    yield mod.i_go.eq(1)
-
-    for i in range((testattr.ticks_after_inputs + testattr.ticks_after_outputs)
-                   * len(testattr.io_decl) + 2):
-        yield
-
-    is_over = yield mod.o_over
-    is_success = yield mod.o_success
-
-    assert(is_over == 1)
-    assert((is_success == 1) == is_meant_to_succeed)
 
 class EnvExample():
     def __init__(self):
@@ -48,6 +34,25 @@ class EnvExample():
             dut, sim_test_module(dut, testattr, self.is_meant_to_succeed),
             vcd_name=testattr.tag + ".vcd")
 
+
+def make_test_module(testattr, dut_class, args=None, specials=None):
+    return SuperTestModule(testattr, dut_class, args, specials)
+
+
+def sim_test_module(mod, testattr, is_meant_to_succeed):
+    yield mod.i_go.eq(1)
+
+    for i in range((testattr.ticks_after_inputs + testattr.ticks_after_outputs)
+                   * len(testattr.io_decl) + 2):
+        yield
+
+    is_over = yield mod.o_over
+    is_success = yield mod.o_success
+
+    assert(is_over == 1)
+    assert((is_success == 1) == is_meant_to_succeed)
+
+
 def test_example_positive_1():
     env = EnvExample()
 
@@ -64,6 +69,7 @@ def test_example_positive_1():
 
     env.runsim()
 
+
 def test_example_negative_1():
     env = EnvExample()
 
@@ -79,6 +85,7 @@ def test_example_negative_1():
     env.is_meant_to_succeed = False
 
     env.runsim()
+
 
 def test_example_multi_positive_1():
     env = EnvExample()
@@ -97,6 +104,7 @@ def test_example_multi_positive_1():
 
     env.runsim()
 
+
 def test_example_multi_negative_1():
     env = EnvExample()
 
@@ -114,6 +122,7 @@ def test_example_multi_negative_1():
 
     env.runsim()
 
+
 def test_example_multi_diff_1():
     env = EnvExample()
 
@@ -130,6 +139,7 @@ def test_example_multi_diff_1():
     env.is_meant_to_succeed = False
 
     env.runsim()
+
 
 def test_example_multi_diff_2():
     env = EnvExample()
