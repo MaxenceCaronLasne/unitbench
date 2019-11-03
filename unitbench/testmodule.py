@@ -1,5 +1,20 @@
 from migen import *
 
+class Counter(Module):
+    def __init__(self, n):
+        # Output
+        self.o = Signal(max=n, reset=0)
+
+        ###
+
+        self.sync += [
+            If(self.o == n - 1,
+                self.o.eq(0)
+            ).Else(
+                self.o.eq(self.o + 1)
+            )
+        ]
+
 class SuperTestModule(Module):
     """Migen super-module for a single test.
 
@@ -19,7 +34,12 @@ class SuperTestModule(Module):
         Returns:
             list: A list of Migen statements describing input applications.
         """
-        pass
+        res = []
+
+        for signame, value in i_decl.items():
+            res += [ getattr(self.dut, signame).eq(value) ]
+
+        return res
 
 
     def make_outputs_checker(self, o_decl):
@@ -32,40 +52,78 @@ class SuperTestModule(Module):
         Returns:
             list: A list of Migen statements describing output checking.
         """
-        pass
+        res = []
+
+        for signame, value in o_decl.items():
+            res += [ self.test_outs[signame].eq(getattr(self.dut, signame) != value) ]
+
+        return res
+
+    def make_outputs_signals(self, io_decl):
+        res = {}
+
+        for _, o_decl in io_decl:
+            for signame in o_decl:
+                res[signame] = Signal(name="test_out_" + signame)
+
+        return res
 
     def __init__(self, testattr, dut_class, args=None, specials=None):
+        # Input
         self.i_go = Signal()
-        self.o_over = Signal()
-        self.o_success = Signal()
 
+        # Outputs
+        self.o_over = Signal()
+        self.o_success = Signal(reset=1)
+
+        # Locals
+        self.test_outs = self.make_outputs_signals(testattr.io_decl)
+        self.cat_test_outs = Cat([signal for _, signal in self.test_outs.items()])
+
+        # Sub-modules
         if args is not None:
             self.dut = dut_class(*args)
         else:
             self.dut = dut_class()
 
-        # Sub-modules
         self.submodules += self.dut
 
+        # Specials
         if specials is not None:
             self.specials += specials
 
-#    Pseudo code for __init__:
-#
-#        generate_io_assignations(testattr.signals_decl)
-#
-#        cases = {}
-#        tick_count = 0
-#
-#        # Add some signals for output checking
-#        for i_decl, o_decl in testattr.io_decl:
-#            cases[tick_count] = self.make_inputs_applications(i_decl)
-#            tick_count += testattr.ticks_after_inputs
-#
-#            cases[tick_count] = self.make_output_checker(o_decl)
-#            tick_count += testattr.ticks_after_outputs
-#
-#        self.sync += Case(counter.o, cases)
+        ###
+
+        cases = {}
+        tick_count = 0
+
+        for i_decl, o_decl in testattr.io_decl:
+            cases[tick_count] = []
+            cases[tick_count] += self.make_inputs_applications(i_decl)
+            tick_count += testattr.ticks_after_inputs
+
+            cases[tick_count + 1] = []
+            cases[tick_count + 1] += self.make_outputs_checker(o_decl)
+            tick_count += testattr.ticks_after_outputs
+
+        # Counter initialization using `tick_count`
+        counter = Counter(tick_count + 3)
+        self.submodules += counter
+
+        self.sync += Case(counter.o, cases)
+
+        # `self.o_over` control
+        self.comb += [ self.o_over.eq(counter.o == tick_count + 2) ]
+
+        # `self.o_success` control
+        self.comb += [
+            If(self.o_success == 1,
+               self.o_success.eq(self.cat_test_outs == 0)
+            ).Else(
+                self.o_success.eq(0)
+            )
+        ]
+
 
 class SupervisorModule(Module):
     def __init__(self, unitmodules):
