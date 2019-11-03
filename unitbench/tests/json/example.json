@@ -1,15 +1,5 @@
 {
     "name": "example",
-    "signals": {
-        "inputs": [
-            "i_first",
-            "i_second"
-        ],
-        "outputs": [
-            "o_first",
-            "o_second"
-        ]
-    },
     "tests": [ {
         "tag": "first-test",
         "ticks_after_inputs": 1,

@@ -1,6 +1,6 @@
 from migen import *
 
-class TestModule(Module):
+class SuperTestModule(Module):
     """Migen super-module for a single test.
 
     Args:
@@ -34,16 +34,21 @@ class TestModule(Module):
         """
         pass
 
-    def __init__(self, testattr, dut_class, args, specials):
+    def __init__(self, testattr, dut_class, args=None, specials=None):
         self.i_go = Signal()
         self.o_over = Signal()
         self.o_success = Signal()
 
-        self.dut = dut_class(*args)
+        if args is not None:
+            self.dut = dut_class(*args)
+        else:
+            self.dut = dut_class()
 
         # Sub-modules
         self.submodules += self.dut
-        self.specials += specials
+
+        if specials is not None:
+            self.specials += specials
 
 #    Pseudo code for __init__:
 #
@@ -62,6 +67,6 @@ class TestModule(Module):
 #
 #        self.sync += Case(counter.o, cases)
 
-class TestSupervisorModule(Module):
+class SupervisorModule(Module):
     def __init__(self, unitmodules):
         self.o_successes = Signal(len(unitmodules))
