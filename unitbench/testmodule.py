@@ -60,6 +60,14 @@ class SuperTestModule(Module):
         return res
 
     def make_outputs_signals(self, io_decl):
+        """Make a dictionary that contains signals corresponding to o_decl.
+
+        Args:
+            io_decl (list of dict): list of (i_decl, o_decl) couples.
+
+        Returns:
+            dict: dictionary associating output signal names with test signal.
+        """
         res = {}
 
         for _, o_decl in io_decl:
@@ -69,22 +77,30 @@ class SuperTestModule(Module):
         return res
 
     def __init__(self, testattr, dut_class, args=None, specials=None):
-        # Input
-        self.i_go = Signal()
+        self.i_go = Signal() # Unused for now.
 
         # Outputs
+
+        #: Signal: up if the test process is over.
         self.o_over = Signal()
+
+        #: Signal: up if the test result is successful. Relevant only when
+        #          `o_over` is up.
         self.o_success = Signal(reset=1)
 
         # Locals
+
+        #: dict: association between DUT's output signals names and signals.
         self.test_outs = self.make_outputs_signals(testattr.io_decl)
+
+        #: Signal(n): concatenation of all signals contained in
+        #             `self.test_outs`.
         self.cat_test_outs = Cat([signal for _, signal in self.test_outs.items()])
 
         # Sub-modules
-        if args is not None:
-            self.dut = dut_class(*args)
-        else:
-            self.dut = dut_class()
+
+        #: Module: device under test's module instance.
+        self.dut = dut_class() if args is None else dut_class(*args)
 
         self.submodules += self.dut
 
