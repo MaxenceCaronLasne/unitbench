@@ -1,6 +1,6 @@
 import pytest
 import inspect
-from ...testmodule import SuperTestModule
+from ...testmodule import SuperUnit
 from ..modules.example import ExampleModule
 from migen import *
 
@@ -36,7 +36,7 @@ class EnvExample():
 
 
 def make_test_module(testattr, dut_class, args=None, specials=None):
-    return SuperTestModule(testattr, dut_class, args, specials)
+    return SuperUnit(testattr, dut_class, args, specials)
 
 
 def sim_test_module(mod, testattr, is_meant_to_succeed):
