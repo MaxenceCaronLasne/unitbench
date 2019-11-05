@@ -2,7 +2,7 @@ import json
 import collections
 
 
-class TestAttributes():
+class TestCase():
     """Attributes of a single test.
 
     Args:
@@ -14,7 +14,7 @@ class TestAttributes():
         self.tag = test_data["tag"]
 
         #: list of couples of decl: List of IO declarations.
-        self.io_decl = self.make_io_decl(test_data)
+        self.io_decl = self._make_io_decl(test_data)
 
         #: int: ticks to pass after input application.
         self.ticks_after_inputs = test_data["ticks_after_inputs"]
@@ -22,7 +22,7 @@ class TestAttributes():
         #: int: ticks to pass after output checking.
         self.ticks_after_outputs = test_data["ticks_after_outputs"]
 
-    def make_io_decl(self, test_data):
+    def _make_io_decl(self, test_data):
         """Make io_decl dictionaries from data.
 
         Args:
@@ -60,15 +60,15 @@ class TestsDeclaration():
 
     def __init__(self, filename):
         #: dict: data parsed from JSON tests declaration.
-        self.data = self.make_data(filename)
+        self._data = self._parse_testfile(filename)
 
         #: str: name of the testsuite.
-        self.name = self.data["name"]
+        self.name = self._data["name"]
 
         #: list of TestAttributes(): list of each test's attributes.
-        self.testattrs = self.make_testattrs()
+        self.testcases = self._make_testcases()
 
-    def make_data(self, filename):
+    def _parse_testfile(self, filename):
         """Parses a JSON tests declaration from filename.
 
         Args:
@@ -86,7 +86,7 @@ class TestsDeclaration():
 
         return res
 
-    def make_testattrs(self):
+    def _make_testcases(self):
         """Make a list of TestAttributes() from tests declaration.
 
         Returns:
@@ -94,7 +94,7 @@ class TestsDeclaration():
         """
         res = []
 
-        for t in self.data["tests"]:
-            res += [TestAttributes(t)]
+        for t in self._data["tests"]:
+            res += [TestCase(t)]
 
         return res
