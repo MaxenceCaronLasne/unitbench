@@ -9,6 +9,7 @@ class TestCase():
         test_data (dict): data for a single test, parsed from JSON
                           test declaration.
     """
+    __test__ = False #: Ignored by Pytest
 
     def __init__(self, test_data):
         self.tag = test_data["tag"]
@@ -57,6 +58,8 @@ class TestsDeclaration():
     Args:
         filename (str): name of the test declaration JSON file.
     """
+
+    __test__ = False #: Ignored by Pytest
 
     def __init__(self, filename):
         #: dict: data parsed from JSON tests declaration.
