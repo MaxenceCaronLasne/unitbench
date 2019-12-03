@@ -1,4 +1,4 @@
-import pytest
+import tempfile
 import io
 from ...testbuilder import UnitBenchBuilder
 from ..modules.example import ExampleModule
@@ -13,3 +13,13 @@ def test_builder_example_1():
 
     s.seek(0)
     assert(s.read() != "")
+
+
+def test_builder_file_1():
+    u = UnitBenchBuilder("unitbench/tests/json/example.json",
+                         ExampleModule, [10])
+
+    with tempfile.TemporaryDirectory() as tmpd:
+        u.write_verilog((tmpd + "/tmp.v").__str__(), 0)
+        with open(tmpd + "/tmp.v", "r") as t:
+            assert(t.read() != "")
