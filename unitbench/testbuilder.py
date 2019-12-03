@@ -27,6 +27,4 @@ class UnitBenchBuilder():
 
     def write_verilog(self, filename, testcase_index):
         v = self._generate_verilog(testcase_index)
-        with open(filename, "w") as f:
-            v.write(f)
-
+        v.write(filename)
