@@ -1,4 +1,4 @@
-from migen import *
+from migen import Module, Signal, If, Cat, Case
 
 
 class Counter(Module):
