@@ -4,7 +4,7 @@ from ...testbuilder import UnitBenchBuilder
 from ..modules.example import ExampleModule
 
 
-def test_builder_example_1():
+def test_builder_gen_verilog_in_stream_1():
     s = io.StringIO("")
     u = UnitBenchBuilder("unitbench/tests/json/example.json",
                          ExampleModule, [10])
@@ -15,7 +15,7 @@ def test_builder_example_1():
     assert(s.read() != "")
 
 
-def test_builder_file_1():
+def test_builder_write_verilog_1():
     u = UnitBenchBuilder("unitbench/tests/json/example.json",
                          ExampleModule, [10])
 
