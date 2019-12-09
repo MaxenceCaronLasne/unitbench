@@ -1,0 +1,121 @@
+{
+    "definitions": {},
+    "type": "object",
+    "title": "root",
+    "default": null,
+    "required": [
+        "name",
+        "tests"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "title": "The Name Schema",
+            "default": "",
+            "examples": [
+                "example"
+            ],
+            "pattern": "^(.*)$"
+        },
+        "tests": {
+            "type": "array",
+            "title": "tests",
+            "default": null,
+            "items": {
+                "type": "object",
+                "title": "items",
+                "default": null,
+                "required": [
+                    "tag",
+                    "ticks_after_inputs",
+                    "ticks_after_outputs",
+                    "rounds"
+                ],
+                "properties": {
+                    "tag": {
+                        "type": "string",
+                        "title": "tag",
+                        "default": "",
+                        "examples": [
+                            "first-test"
+                        ],
+                        "pattern": "^(.*)$"
+                    },
+                    "ticks_after_inputs": {
+                        "type": "integer",
+                        "title": "ticks_after_inputs",
+                        "default": 0,
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "ticks_after_outputs": {
+                        "type": "integer",
+                        "title": "ticks_after_outputs",
+                        "default": 0,
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "rounds": {
+                        "type": "array",
+                        "title": "rounds",
+                        "default": null,
+                        "items": {
+                            "type": "object",
+                            "title": "items",
+                            "default": null,
+                            "required": [
+                                "inputs",
+                                "outputs"
+                            ],
+                            "properties": {
+                                "inputs": {
+                                    "type": "object",
+                                    "title": "The Inputs Schema",
+                                    "patternProperties": {
+                                        "^(.*)$": {
+                                            "type": [
+                                                "string",
+                                                "integer"
+                                            ],
+                                            "title": "input_signal_scheme",
+                                            "default": 0,
+                                            "examples": [
+                                                1,
+                                                "0b0001"
+                                            ],
+                                            "pattern": "^0b(0|1)+$"
+                                        }
+                                    }
+                                },
+                                "outputs": {
+                                    "type": "object",
+                                    "title": "The Outputs Schema",
+                                    "required": [
+                                        "o_first"
+                                    ],
+                                    "patternProperties": {
+                                        "^(.*)$": {
+                                            "type": [
+                                                "string",
+                                                "integer"
+                                            ],
+                                            "title": "The O_first Schema",
+                                            "default": 0,
+                                            "examples": [
+                                                1,
+                                                "0b0001"
+                                            ],
+                                            "pattern": "^0b(0|1)+$"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

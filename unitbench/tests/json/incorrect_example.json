@@ -1,0 +1,49 @@
+{
+    "name": "example",
+    "tests": [ {
+        "ticks_after_inputs": 1,
+        "ticks_after_outputs": 1,
+        "rounds": [ {
+            "inputs": {
+                "i_first": 1,
+                "i_second": "0b0001"
+            },
+            "outputs": {
+                "o_first": 1,
+                "o_second": "0b0001"
+            }
+        }, {
+            "inputs": {
+                "i_first": 2,
+                "i_second": "0b0010"
+            },
+            "outputs": {
+                "o_first": 2,
+                "o_second": "0b0010"
+            }
+        } ]
+    }, {
+        "tag": "second-test",
+        "ticks_after_inputs": 1,
+        "ticks_after_outputs": 1,
+        "rounds": [ {
+            "inputs": {
+                "i_first": 3,
+                "i_second": "0b0011"
+            },
+            "outputs": {
+                "o_first": 3,
+                "o_second": "0b0011"
+            }
+        }, {
+            "inputs": {
+                "i_first": 4,
+                "i_second": "0b0100"
+            },
+            "outputs": {
+                "o_first": 4,
+                "o_second": "0b0100"
+            }
+        } ]
+    } ]
+}

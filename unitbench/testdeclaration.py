@@ -1,4 +1,5 @@
 import json
+from jsonschema import validate
 import collections
 
 
@@ -9,7 +10,7 @@ class TestCase():
         test_data (dict): data for a single test, parsed from JSON
                           test declaration.
     """
-    __test__ = False #: Ignored by Pytest
+    __test__ = False  #: Ignored by Pytest
 
     def __init__(self, test_data):
         self.tag = test_data["tag"]
@@ -71,6 +72,7 @@ class TestsDeclaration():
         #: list of TestAttributes(): list of each test's attributes.
         self.testcases = self._make_testcases()
 
+
     def _parse_testfile(self, filename):
         """Parses a JSON tests declaration from filename.
 
@@ -87,7 +89,22 @@ class TestsDeclaration():
             res = json.loads(
                 f.read(), object_pairs_hook=collections.OrderedDict)
 
+        self._validate_testfile(res)
+
         return res
+
+    def _validate_testfile(self, data):
+        """Validate raw data against JSON Scheme.
+
+        Args:
+            data (dict): data parsed from JSON file.
+        """
+        schema = None
+
+        with open("unitbench/testdecl_scheme.json", "r") as f:
+            schema = json.loads(f.read())
+
+        validate(data, schema)
 
     def _make_testcases(self):
         """Make a list of TestAttributes() from tests declaration.

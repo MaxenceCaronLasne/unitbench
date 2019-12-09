@@ -9,7 +9,8 @@ if sys.version_info[:3] < (3, 7):
 
 requirements = [
     "migen",
-    "pytest"
+    "pytest",
+    "jsonschema"
 ]
 
 setup(
