@@ -6,27 +6,27 @@ from migen import *
 
 
 class MockTestAttributes():
-    def __init__(self, tag, io_decl, ticks_after_inputs, ticks_after_outputs):
+    def __init__(self, tag, io_decl, ticks_before_next_input, ticks_before_checking):
         self.tag = tag
         self.io_decl = io_decl
-        self.ticks_after_inputs = ticks_after_inputs
-        self.ticks_after_outputs = ticks_after_outputs
+        self.ticks_before_next_input = ticks_before_next_input
+        self.ticks_before_checking = ticks_before_checking
 
 
 class EnvExample():
     def __init__(self):
         self.tag = ""
         self.io_decl = []
-        self.ticks_after_inputs = 0
-        self.ticks_after_outputs = 0
+        self.ticks_before_next_input = 0
+        self.ticks_before_checking = 0
         self.is_meant_to_succeed = True
         self.dut_class = ExampleModule
 
     def runsim(self):
         testattr = MockTestAttributes(
             self.tag, self.io_decl,
-            self.ticks_after_inputs,
-            self.ticks_after_outputs)
+            self.ticks_before_next_input,
+            self.ticks_before_checking)
 
         dut = make_test_module(testattr, self.dut_class, [8])
 
@@ -42,7 +42,7 @@ def make_test_module(testattr, dut_class, args=None, specials=None):
 def sim_test_module(mod, testattr, is_meant_to_succeed):
     yield mod.i_go.eq(1)
 
-    for i in range((testattr.ticks_after_inputs + testattr.ticks_after_outputs)
+    for i in range((testattr.ticks_before_next_input + testattr.ticks_before_checking)
                    * len(testattr.io_decl) + 2):
         yield
 
@@ -62,8 +62,8 @@ def test_example_positive_1():
         ({"i_first": 1, "i_second": 1}, {"o_first": 1, "o_second": 1})
     ]
 
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = True
 
@@ -79,8 +79,8 @@ def test_example_negative_1():
         ({"i_first": 2, "i_second": 2}, {"o_first": 1, "o_second": 1}),
     ]
 
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = False
 
@@ -97,8 +97,8 @@ def test_example_multi_positive_1():
         ({"i_first": 2, "i_second": 2}, {"o_first": 2, "o_second": 2})
     ]
 
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = True
 
@@ -115,8 +115,8 @@ def test_example_multi_negative_1():
         ({"i_first": 1, "i_second": 1}, {"o_first": 2, "o_second": 2})
     ]
 
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = False
 
@@ -133,8 +133,8 @@ def test_example_multi_diff_1():
         ({"i_first": 3, "i_second": 3}, {"o_first": 3, "o_second": 3})
     ]
 
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = False
 
@@ -148,8 +148,8 @@ def test_example_multi_diff_2():
         ({"i_first": 1, "i_second": 1}, {"o_first": 1, "o_second": 1}),
         ({"i_first": 2, "i_second": 2}, {"o_first": 3, "o_second": 3})
     ]
-    env.ticks_after_inputs = 1
-    env.ticks_after_outputs = 0
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 0
 
     env.is_meant_to_succeed = False
 

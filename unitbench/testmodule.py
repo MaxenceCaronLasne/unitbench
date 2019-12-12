@@ -119,11 +119,11 @@ class SuperUnit(Module):
         for i_decl, o_decl in testcase.io_decl:
             cases[tick_count] = []
             cases[tick_count] += self._make_inputs_applications(i_decl)
-            tick_count += testcase.ticks_after_inputs
+            tick_count += testcase.ticks_before_next_input
 
             cases[tick_count + 1] = []
             cases[tick_count + 1] += self._make_outputs_checker(o_decl)
-            tick_count += testcase.ticks_after_outputs
+            tick_count += testcase.ticks_before_checking
 
         # Counter initialization using `tick_count`
         counter = Counter(tick_count + 3)

@@ -27,8 +27,8 @@
                 "default": null,
                 "required": [
                     "tag",
-                    "ticks_after_inputs",
-                    "ticks_after_outputs",
+                    "ticks_before_next_input",
+                    "ticks_before_checking",
                     "rounds"
                 ],
                 "properties": {
@@ -41,17 +41,17 @@
                         ],
                         "pattern": "^(.*)$"
                     },
-                    "ticks_after_inputs": {
+                    "ticks_before_next_input": {
                         "type": "integer",
-                        "title": "ticks_after_inputs",
+                        "title": "ticks_before_next_input",
                         "default": 0,
                         "examples": [
                             1
                         ]
                     },
-                    "ticks_after_outputs": {
+                    "ticks_before_checking": {
                         "type": "integer",
-                        "title": "ticks_after_outputs",
+                        "title": "ticks_before_checking",
                         "default": 0,
                         "examples": [
                             1

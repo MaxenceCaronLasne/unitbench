@@ -18,11 +18,11 @@ class TestCase():
         #: list of couples of decl: List of IO declarations.
         self.io_decl = self._make_io_decl(test_data)
 
-        #: int: ticks to pass after input application.
-        self.ticks_after_inputs = test_data["ticks_after_inputs"]
+        #: int: ticks to pass before next input application.
+        self.ticks_before_next_input = test_data["ticks_before_next_input"]
 
-        #: int: ticks to pass after output checking.
-        self.ticks_after_outputs = test_data["ticks_after_outputs"]
+        #: int: ticks to pass before checking outputs
+        self.ticks_before_checking = test_data["ticks_before_checking"]
 
     def _make_io_decl(self, test_data):
         """Make io_decl dictionaries from data.

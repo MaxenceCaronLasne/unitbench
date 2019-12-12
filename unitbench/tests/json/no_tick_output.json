@@ -2,7 +2,7 @@
     "name": "example",
     "tests": [ {
         "tag": "first-test",
-        "ticks_after_inputs": 1,
+        "ticks_before_next_input": 1,
         "rounds": [ {
             "inputs": {
                 "i_first": 1,
@@ -24,8 +24,8 @@
         } ]
     }, {
         "tag": "second-test",
-        "ticks_after_inputs": 1,
-        "ticks_after_outputs": 1,
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 1,
         "rounds": [ {
             "inputs": {
                 "i_first": 3,

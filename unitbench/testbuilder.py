@@ -2,6 +2,7 @@ from migen.fhdl import verilog
 from migen.sim import run_simulation
 from unitbench.testmodule import SuperUnit
 from unitbench.testdeclaration import TestsDeclaration
+import queue
 
 
 class UnitBenchBuilder():
@@ -42,6 +43,36 @@ class UnitBenchBuilder():
         # TODO: standardize path generation
         return outdir + "/" + testname + "_" + tag + ".vcd"
 
+    def _get_queues(testcase):
+        def _push_expected_values(q, testcase, is_first, expected_values):
+            if is_first:
+                for _ in range(testcase.ticks_before_checking):
+                    q.put(None)
+            else:
+                for _ in range(testcase.ticks_before_next_input - 1):
+                    q.put(None)
+
+            q.put(expected_values)
+
+            return q
+
+        def _push_input_values(q, testcase, in_values):
+            q.put(in_values)
+            for _ in range(testcase.ticks_before_next_input - 1):
+                q.put(None)
+
+        in_q = queue.Queue()
+        exp_q = queue.Queue()
+
+        is_first = True
+        for in_values, expected_values in testcase.io_decl:
+            _push_input_values(in_q, testcase, in_values)
+            _push_expected_values(exp_q, testcase, is_first,
+                                    expected_values)
+            is_first = False
+
+        return in_q, exp_q
+
     def _sim_and_asrt_testcase(self, testcase, testname, outdir):
         def _make_dut(self):
             if self._args is not None:
@@ -64,28 +95,32 @@ class UnitBenchBuilder():
             assert out_value == expected_value, message
 
         def sim(dut, testcase):
-            round_idx = 0
-            for in_values, expected_values in testcase.io_decl:
-                # Set input signals to given values
-                for signame, in_value in in_values.items():
-                    yield _set_input(dut, signame, in_value)
+            in_q, exp_q = _get_queues(testcase)
 
-                # Pass given ticks after inputs setting
-                for _ in range(testcase.ticks_after_inputs):
-                    yield
+            round_idx = -1
+            ticks_idx = 0
 
-                # Get output signals result and check errors in respect with
-                # espected values
-                for signame, expected_value in expected_values.items():
-                    out_value = yield from _get_output(dut, signame)
-                    _unitbench_assert(signame, out_value, expected_value,
-                                      testname, round_idx)
+            while (not in_q.empty() or not exp_q.empty()):
+                in_values = None if in_q.empty() else in_q.get()
 
-                # Pass given ticks after output checking
-                for _ in range(testcase.ticks_after_outputs * 0):
-                    yield
+                if in_values is not None:
+                    round_idx += 1
+                    # Set input signals to given values
+                    for signame, in_value in in_values.items():
+                        yield _set_input(dut, signame, in_value)
 
-                round_idx += 1
+                expected_values = None if exp_q.empty() else exp_q.get()
+
+                if expected_values is not None:
+                    # Get output signals result and check errors in respect
+                    # with espected values
+                    for signame, expected_value in expected_values.items():
+                        out_value = yield from _get_output(dut, signame)
+                        _unitbench_assert(signame, out_value, expected_value,
+                                          testname, round_idx)
+
+                yield
+                ticks_idx += 1
 
         dut = self._dut_class(*self._args)
 
