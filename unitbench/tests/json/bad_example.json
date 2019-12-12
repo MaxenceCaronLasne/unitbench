@@ -10,8 +10,8 @@
                 "i_second": "0b0001"
             },
             "outputs": {
-                "o_first": 1,
-                "o_second": "0b0001"
+                "o_first": 0,
+                "o_second": "0b0000"
             }
         }, {
             "inputs": {

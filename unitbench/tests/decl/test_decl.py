@@ -45,12 +45,12 @@ def test_test_attributes_tag(td):
 
 def test_test_attributes_ticks(td):
     testattr = td.testcases[0]
-    assert(testattr.ticks_after_inputs == 1)
-    assert(testattr.ticks_after_outputs == 1)
+    assert(testattr.ticks_after_inputs == 2)
+    assert(testattr.ticks_after_outputs == 0)
 
     testattr = td.testcases[1]
-    assert(testattr.ticks_after_inputs == 1)
-    assert(testattr.ticks_after_outputs == 1)
+    assert(testattr.ticks_after_inputs == 2)
+    assert(testattr.ticks_after_outputs == 0)
 
 
 def test_test_attributes_io_decl(td):
