@@ -28,3 +28,6 @@ class UnitBenchBuilder():
     def write_verilog(self, filename, testcase_index):
         v = self._generate_verilog(testcase_index)
         v.write(filename)
+
+    def simulate_and_assert(self):
+        pass
