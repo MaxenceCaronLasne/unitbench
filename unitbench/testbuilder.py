@@ -37,13 +37,34 @@ class UnitBenchBuilder():
         v.write(filename)
 
     def _get_vcd_name(self, testname, tag, outdir):
+        """Generate vcd file name.
+
+        Args:
+            testname (str): name of the current test.
+            tag (str): name of the current testcase.
+            outdir (str): where to generate the vcd file.
+
+        Returns:
+            str or None: None if the vcd generation is not activated, vcd file
+                         name else.
+        """
         if not self._gen_vcd:
             return None
 
         # TODO: standardize path generation
         return outdir + "/" + testname + "_" + tag + ".vcd"
 
-    def _get_queues(testcase):
+    def _get_queues(self, testcase):
+        """Generate input and expected io_decl queues.
+
+        Args:
+            testcase (TestDeclaration()): current test case.
+
+        Returns:
+            (queue.Queue(), queue.Queue()): input and expected declarations
+                                            queues.
+        """
+
         def _push_expected_values(q, testcase, is_first, expected_values):
             if is_first:
                 for _ in range(testcase.ticks_before_checking):
@@ -68,12 +89,20 @@ class UnitBenchBuilder():
         for in_values, expected_values in testcase.io_decl:
             _push_input_values(in_q, testcase, in_values)
             _push_expected_values(exp_q, testcase, is_first,
-                                    expected_values)
+                                  expected_values)
             is_first = False
 
         return in_q, exp_q
 
-    def _sim_and_asrt_testcase(self, testcase, testname, outdir):
+    def _sim_and_assert_testcase(self, testcase, testname, outdir):
+        """Migen powered simulation and checking of a testcase.
+
+        Args:
+            testcase (TestDeclaration()): current test case.
+            testname (str): name of the current test.
+            outdir (str): output directory for the vcd file.
+        """
+
         def _make_dut(self):
             if self._args is not None:
                 return self._dut_class(*self._args)
@@ -95,7 +124,7 @@ class UnitBenchBuilder():
             assert out_value == expected_value, message
 
         def sim(dut, testcase):
-            in_q, exp_q = _get_queues(testcase)
+            in_q, exp_q = self._get_queues(testcase)
 
             round_idx = -1
             ticks_idx = 0
@@ -118,6 +147,8 @@ class UnitBenchBuilder():
                         out_value = yield from _get_output(dut, signame)
                         _unitbench_assert(signame, out_value, expected_value,
                                           testname, round_idx)
+                        # TODO: round_idx is not correct. Needs to write a
+                        #       custom exception for testing purpose.
 
                 yield
                 ticks_idx += 1
@@ -129,5 +160,11 @@ class UnitBenchBuilder():
                                                    outdir))
 
     def simulate_and_assert(self, outdir="."):
+        """Migen powered simulation and checking of the bench.
+
+        Args:
+            outdir (str): output directory for the vcd file.
+        """
         for testcase in self._testdecl.testcases:
-            self._sim_and_asrt_testcase(testcase, self._testdecl.name, outdir)
+            self._sim_and_assert_testcase(testcase, self._testdecl.name,
+                                          outdir)
