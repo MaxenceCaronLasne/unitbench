@@ -116,23 +116,29 @@ class SuperUnit(Module):
         cases = {}
         tick_count = 0
 
-        for i_decl, o_decl in testcase.io_decl:
-            cases[tick_count] = []
-            cases[tick_count] += self._make_inputs_applications(i_decl)
-            tick_count += testcase.ticks_before_next_input
+        in_q, exp_q = testcase.get_io_queues()
 
-            cases[tick_count + 1] = []
-            cases[tick_count + 1] += self._make_outputs_checker(o_decl)
-            tick_count += testcase.ticks_before_checking
+        while not in_q.empty() or not exp_q.empty():
+            cases[tick_count] = []
+
+            in_values = None if in_q.empty() else in_q.get()
+            if in_values is not None:
+                cases[tick_count] += self._make_inputs_applications(in_values)
+
+            exp_values = None if exp_q.empty() else exp_q.get()
+            if exp_values is not None:
+                cases[tick_count] += self._make_outputs_checker(exp_values)
+
+            tick_count += 1
 
         # Counter initialization using `tick_count`
-        counter = Counter(tick_count + 3)
+        counter = Counter(tick_count + 1)
         self.submodules += counter
 
         self.sync += Case(counter.o, cases)
 
         # `self.o_over` control
-        self.comb += [self.o_over.eq(counter.o == tick_count + 2)]
+        self.comb += [self.o_over.eq(counter.o == tick_count)]
 
         # `self.o_success` control
         self.comb += [

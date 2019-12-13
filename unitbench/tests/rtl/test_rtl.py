@@ -1,16 +1,55 @@
-import pytest
-import inspect
+import queue
 from ...testmodule import SuperUnit
 from ..modules.example import ExampleModule
 from migen import *
 
 
 class MockTestAttributes():
-    def __init__(self, tag, io_decl, ticks_before_next_input, ticks_before_checking):
+    def __init__(self, tag, io_decl, ticks_before_next_input,
+                 ticks_before_checking):
         self.tag = tag
         self.io_decl = io_decl
         self.ticks_before_next_input = ticks_before_next_input
         self.ticks_before_checking = ticks_before_checking
+
+    def get_io_queues(self):
+        """Generate input and expected io_decl queues.
+
+        Args:
+            testcase (TestDeclaration()): current test case.
+
+        Returns:
+            (queue.Queue(), queue.Queue()): input and expected declarations
+                                            queues.
+        """
+
+        def _push_expected_values(q, is_first, expected_values):
+            if is_first:
+                for _ in range(self.ticks_before_checking):
+                    q.put(None)
+            else:
+                for _ in range(self.ticks_before_next_input - 1):
+                    q.put(None)
+
+            q.put(expected_values)
+
+            return q
+
+        def _push_input_values(q, in_values):
+            q.put(in_values)
+            for _ in range(self.ticks_before_next_input - 1):
+                q.put(None)
+
+        in_q = queue.Queue()
+        exp_q = queue.Queue()
+
+        is_first = True
+        for in_values, expected_values in self.io_decl:
+            _push_input_values(in_q, in_values)
+            _push_expected_values(exp_q, is_first, expected_values)
+            is_first = False
+
+        return in_q, exp_q
 
 
 class EnvExample():
@@ -42,8 +81,8 @@ def make_test_module(testattr, dut_class, args=None, specials=None):
 def sim_test_module(mod, testattr, is_meant_to_succeed):
     yield mod.i_go.eq(1)
 
-    for i in range((testattr.ticks_before_next_input + testattr.ticks_before_checking)
-                   * len(testattr.io_decl) + 2):
+    for i in range(testattr.ticks_before_next_input * len(testattr.io_decl) +
+                   testattr.ticks_before_checking):
         yield
 
     is_over = yield mod.o_over
@@ -63,7 +102,7 @@ def test_example_positive_1():
     ]
 
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = True
 
@@ -80,7 +119,7 @@ def test_example_negative_1():
     ]
 
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = False
 
@@ -98,7 +137,7 @@ def test_example_multi_positive_1():
     ]
 
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = True
 
@@ -116,7 +155,7 @@ def test_example_multi_negative_1():
     ]
 
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = False
 
@@ -134,7 +173,7 @@ def test_example_multi_diff_1():
     ]
 
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = False
 
@@ -149,7 +188,7 @@ def test_example_multi_diff_2():
         ({"i_first": 2, "i_second": 2}, {"o_first": 3, "o_second": 3})
     ]
     env.ticks_before_next_input = 1
-    env.ticks_before_checking = 0
+    env.ticks_before_checking = 2
 
     env.is_meant_to_succeed = False
 
