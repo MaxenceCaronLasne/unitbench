@@ -54,46 +54,6 @@ class UnitBenchBuilder():
         # TODO: standardize path generation
         return outdir + "/" + testname + "_" + tag + ".vcd"
 
-    def _get_queues(self, testcase):
-        """Generate input and expected io_decl queues.
-
-        Args:
-            testcase (TestDeclaration()): current test case.
-
-        Returns:
-            (queue.Queue(), queue.Queue()): input and expected declarations
-                                            queues.
-        """
-
-        def _push_expected_values(q, testcase, is_first, expected_values):
-            if is_first:
-                for _ in range(testcase.ticks_before_checking):
-                    q.put(None)
-            else:
-                for _ in range(testcase.ticks_before_next_input - 1):
-                    q.put(None)
-
-            q.put(expected_values)
-
-            return q
-
-        def _push_input_values(q, testcase, in_values):
-            q.put(in_values)
-            for _ in range(testcase.ticks_before_next_input - 1):
-                q.put(None)
-
-        in_q = queue.Queue()
-        exp_q = queue.Queue()
-
-        is_first = True
-        for in_values, expected_values in testcase.io_decl:
-            _push_input_values(in_q, testcase, in_values)
-            _push_expected_values(exp_q, testcase, is_first,
-                                  expected_values)
-            is_first = False
-
-        return in_q, exp_q
-
     def _sim_and_assert_testcase(self, testcase, testname, outdir):
         """Migen powered simulation and checking of a testcase.
 
@@ -124,7 +84,7 @@ class UnitBenchBuilder():
             assert out_value == expected_value, message
 
         def sim(dut, testcase):
-            in_q, exp_q = self._get_queues(testcase)
+            in_q, exp_q = testcase.get_io_queues()
 
             round_idx = -1
             ticks_idx = 0

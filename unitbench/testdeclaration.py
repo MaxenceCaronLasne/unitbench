@@ -1,3 +1,4 @@
+import queue
 import json
 from jsonschema import validate
 import collections
@@ -51,6 +52,45 @@ class TestCase():
             res += [(compute_decl(r["inputs"]), compute_decl(r["outputs"]))]
 
         return res
+
+    def get_io_queues(self):
+        """Generate input and expected io_decl queues.
+
+        Args:
+            testcase (TestDeclaration()): current test case.
+
+        Returns:
+            (queue.Queue(), queue.Queue()): input and expected declarations
+                                            queues.
+        """
+
+        def _push_expected_values(q, is_first, expected_values):
+            if is_first:
+                for _ in range(self.ticks_before_checking):
+                    q.put(None)
+            else:
+                for _ in range(self.ticks_before_next_input - 1):
+                    q.put(None)
+
+            q.put(expected_values)
+
+            return q
+
+        def _push_input_values(q, in_values):
+            q.put(in_values)
+            for _ in range(self.ticks_before_next_input - 1):
+                q.put(None)
+
+        in_q = queue.Queue()
+        exp_q = queue.Queue()
+
+        is_first = True
+        for in_values, expected_values in self.io_decl:
+            _push_input_values(in_q, in_values)
+            _push_expected_values(exp_q, is_first, expected_values)
+            is_first = False
+
+        return in_q, exp_q
 
 
 class TestsDeclaration():
