@@ -1,6 +1,6 @@
 import pytest
 import io
-from ...testbuilder import UnitBenchBuilder
+from ...testbuilder import UnitBenchBuilder, UnitBenchAssertionError
 from ..modules.example import ExampleModule
 
 
@@ -70,8 +70,13 @@ def test_simulation_example(unitbenchbuilder_genvcd):
     u.simulate_and_assert()
 
 
-@pytest.mark.xfail
 def test_simulation_bad_example(unitbenchbuilder_bad):
     u = unitbenchbuilder_bad
 
-    u.simulate_and_assert()
+    try:
+        u.simulate_and_assert()
+    except UnitBenchAssertionError as err:
+        assert err.round_idx == 1
+        return
+
+    assert False, "test should not pass"

@@ -1,17 +1,17 @@
 {
-    "name": "example",
+    "name": "bad-example",
     "tests": [ {
         "tag": "first-test",
-        "ticks_after_inputs": 2,
-        "ticks_after_outputs": 0,
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 2,
         "rounds": [ {
             "inputs": {
                 "i_first": 1,
                 "i_second": "0b0001"
             },
             "outputs": {
-                "o_first": 0,
-                "o_second": "0b0000"
+                "o_first": 1,
+                "o_second": "0b0001"
             }
         }, {
             "inputs": {
@@ -19,14 +19,14 @@
                 "i_second": "0b0010"
             },
             "outputs": {
-                "o_first": 2,
+                "o_first": 3,
                 "o_second": "0b0010"
             }
         } ]
     }, {
         "tag": "second-test",
-        "ticks_after_inputs": 2,
-        "ticks_after_outputs": 0,
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 2,
         "rounds": [ {
             "inputs": {
                 "i_first": 3,

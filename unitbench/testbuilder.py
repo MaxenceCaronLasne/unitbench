@@ -83,12 +83,15 @@ class UnitBenchBuilder():
             return (yield getattr(dut, signame))
 
         def _unitbench_assert(signame, out_value, expected_value, testname,
-                              round_idx):
-            message = ("unitbench: `{}`, round {}, "
+                              tag, round_idx):
+            message = ("unitbench: `{}`; `{}`, round {}, "
                        + "test failed: `{}`: {}; expected {}").format(
-                testname, round_idx, signame, out_value, expected_value)
+                           testname, tag, round_idx, signame, out_value,
+                           expected_value)
 
-            assert out_value == expected_value, message
+            if out_value != expected_value:
+                raise UnitBenchAssertionError(
+                    out_value, expected_value, message, round_idx)
 
         def sim(dut, testcase):
             in_q, exp_q = testcase.get_io_queues()
@@ -100,7 +103,6 @@ class UnitBenchBuilder():
                 in_values = None if in_q.empty() else in_q.get()
 
                 if in_values is not None:
-                    round_idx += 1
                     # Set input signals to given values
                     for signame, in_value in in_values.items():
                         yield _set_input(dut, signame, in_value)
@@ -108,12 +110,13 @@ class UnitBenchBuilder():
                 expected_values = None if exp_q.empty() else exp_q.get()
 
                 if expected_values is not None:
+                    round_idx += 1
                     # Get output signals result and check errors in respect
                     # with espected values
                     for signame, expected_value in expected_values.items():
                         out_value = yield from _get_output(dut, signame)
                         _unitbench_assert(signame, out_value, expected_value,
-                                          testname, round_idx)
+                                          testname, testcase.tag, round_idx)
                         # TODO: round_idx is not correct. Needs to write a
                         #       custom exception for testing purpose.
 
