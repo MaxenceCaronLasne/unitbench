@@ -23,6 +23,7 @@ setup(
     author_email="maxence.caron-lasne@lse.epita.fr",
     download_url="https://github.com/MaxenceCaronLasne/unitbench",
     packages=find_packages(),
+    include_package_data=True,
     install_requires=requirements,
     test_suite="unitbench.tests",
     license="BSD",

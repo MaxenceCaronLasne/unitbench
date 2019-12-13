@@ -1,3 +1,4 @@
+import os
 import queue
 import json
 from jsonschema import validate
@@ -140,8 +141,8 @@ class TestsDeclaration():
             data (dict): data parsed from JSON file.
         """
         schema = None
-
-        with open("unitbench/testdecl_scheme.json", "r") as f:
+        dir = os.path.dirname(os.path.realpath(__file__))
+        with open(dir + "/testdecl_scheme.json", "r") as f:
             schema = json.loads(f.read())
 
         validate(data, schema)
