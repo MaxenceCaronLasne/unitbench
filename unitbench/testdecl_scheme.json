@@ -92,16 +92,13 @@
                                 "outputs": {
                                     "type": "object",
                                     "title": "The Outputs Schema",
-                                    "required": [
-                                        "o_first"
-                                    ],
                                     "patternProperties": {
                                         "^(.*)$": {
                                             "type": [
                                                 "string",
                                                 "integer"
                                             ],
-                                            "title": "The O_first Schema",
+                                            "title": "output_signal_scheme",
                                             "default": 0,
                                             "examples": [
                                                 1,
