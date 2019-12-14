@@ -193,3 +193,19 @@ def test_example_multi_diff_2():
     env.is_meant_to_succeed = False
 
     env.runsim()
+
+
+def test_example_null_value_1():
+    env = EnvExample()
+    env.tag = "example-null-value-1"
+    env.io_decl = [
+        ({"i_first": 1, "i_second": 1}, {"o_first": 1, "o_second": 1}),
+        ({"i_first": 2, "i_second": 2}, {"o_first": None, "o_second": 2})
+    ]
+
+    env.ticks_before_next_input = 1
+    env.ticks_before_checking = 2
+
+    env.is_meant_to_succeed = True
+
+    env.runsim()

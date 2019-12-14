@@ -56,6 +56,8 @@ class SuperUnit(Module):
         res = []
 
         for signame, value in o_decl.items():
+            if value is None:
+                continue
             res += [self._test_outs[signame]
                     .eq(getattr(self._dut, signame) != value)]
 

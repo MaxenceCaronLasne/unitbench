@@ -13,7 +13,7 @@ from ...testdeclaration import TestsDeclaration
     "no_rounds.json",
     "no_inputs.json",
     "no_outputs.json",
-    "incorrect_io.json"
+    "incorrect_io.json",
 ])
 def incorrect(request):
     return "unitbench/tests/json/" + request.param
@@ -22,6 +22,17 @@ def incorrect(request):
 def test_incorrect_json(incorrect):
     with pytest.raises(jsonschema.exceptions.ValidationError):
         TestsDeclaration(incorrect)
+
+@pytest.fixture(params=[
+    "example.json",
+    "null.json"
+])
+def correct(request):
+    return "unitbench/tests/json/" + request.param
+
+
+def test_correct_json(correct):
+    TestsDeclaration(correct)
 
 @pytest.fixture
 def td():

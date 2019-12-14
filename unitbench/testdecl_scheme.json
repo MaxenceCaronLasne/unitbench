@@ -96,7 +96,8 @@
                                         "^(.*)$": {
                                             "type": [
                                                 "string",
-                                                "integer"
+                                                "integer",
+                                                "null"
                                             ],
                                             "title": "output_signal_scheme",
                                             "default": 0,

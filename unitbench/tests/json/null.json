@@ -1,0 +1,60 @@
+
+{
+    "name": "example",
+    "tests": [ {
+        "tag": "first-test",
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 2,
+        "rounds": [ {
+            "inputs": {
+                "i_first": 1,
+                "i_second": "0b0001"
+            },
+            "outputs": {
+                "o_first": 1,
+                "o_second": "0b0001"
+            }
+        }, {
+            "inputs": {
+                "i_first": 2,
+                "i_second": "0b0010"
+            },
+            "outputs": {
+                "o_first": 2,
+                "o_second": "0b0010"
+            }
+        }, {
+            "inputs": {
+                "i_first": 3,
+                "i_second": "0b0011"
+            },
+            "outputs": {
+                "o_first": 3,
+                "o_second": null
+            }
+        } ]
+    }, {
+        "tag": "second-test",
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 2,
+        "rounds": [ {
+            "inputs": {
+                "i_first": 3,
+                "i_second": "0b0011"
+            },
+            "outputs": {
+                "o_first": 3,
+                "o_second": "0b0011"
+            }
+        }, {
+            "inputs": {
+                "i_first": 4,
+                "i_second": "0b0100"
+            },
+            "outputs": {
+                "o_first": 4,
+                "o_second": "0b0100"
+            }
+        } ]
+    } ]
+}
