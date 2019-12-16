@@ -2,6 +2,7 @@ import pytest
 import io
 from ...testbuilder import UnitBenchBuilder, UnitBenchAssertionError
 from ..modules.example import ExampleModule
+from ..modules.testmodule2 import test_module_2
 
 
 @pytest.fixture
@@ -80,3 +81,9 @@ def test_simulation_bad_example(unitbenchbuilder_bad):
         return
 
     assert False, "test should not pass"
+
+
+def test_simulation_null():
+    u = UnitBenchBuilder("unitbench/tests/json/test_module_2.json",
+                         test_module_2, [3])
+    u.simulate_and_assert()

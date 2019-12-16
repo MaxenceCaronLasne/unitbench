@@ -82,7 +82,7 @@ class UnitBenchBuilder():
                            testname, tag, round_idx, signame, out_value,
                            expected_value)
 
-            if out_value != expected_value:
+            if expected_value is not None and out_value != expected_value:
                 raise UnitBenchAssertionError(
                     out_value, expected_value, message, round_idx)
 

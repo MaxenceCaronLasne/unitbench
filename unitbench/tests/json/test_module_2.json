@@ -1,0 +1,36 @@
+{
+    "name": "test-module-2",
+    "tests": [{
+        "tag": "example-finded",
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 0,
+        "rounds": [{
+            "inputs": {
+                "a": "0b010100",
+                "b": 0,
+                "c": 1
+            },
+            "outputs": {
+                "d": 1,
+                "e": 1,
+                "f": 1
+            }
+        }]
+    },{
+        "tag": "example-not-finded",
+        "ticks_before_next_input": 1,
+        "ticks_before_checking": 0,
+        "rounds": [{
+            "inputs": {
+                "a": "0b010101",
+                "b": 0,
+                "c": 1
+            },
+            "outputs": {
+                "d": null,
+                "e": null,
+                "f": null
+            }
+        }]
+    }]
+}
