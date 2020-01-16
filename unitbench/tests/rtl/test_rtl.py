@@ -85,6 +85,7 @@ def sim_test_module(mod, testattr, is_meant_to_succeed):
                    testattr.ticks_before_checking):
         yield
 
+    yield
     is_over = yield mod.o_over
     is_success = yield mod.o_success
 

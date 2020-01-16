@@ -134,16 +134,16 @@ class SuperUnit(Module):
             tick_count += 1
 
         # Counter initialization using `tick_count`
-        counter = Counter(tick_count + 1)
+        counter = Counter(tick_count + 2)
         self.submodules += counter
 
         self.sync += Case(counter.o, cases)
 
         # `self.o_over` control
-        self.comb += [self.o_over.eq(counter.o == tick_count)]
+        self.comb += [self.o_over.eq(counter.o == tick_count + 1)]
 
         # `self.o_success` control
-        self.comb += [
+        self.sync += [
             If(self.o_success == 1,
                self.o_success.eq(self._cat_test_outs == 0))
             .Else(
