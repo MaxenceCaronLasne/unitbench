@@ -101,7 +101,7 @@ class TestsDeclaration():
         filename (str): name of the test declaration JSON file.
     """
 
-    __test__ = False #: Ignored by Pytest
+    __test__ = False  #: Ignored by Pytest
 
     def __init__(self, filename):
         #: dict: data parsed from JSON tests declaration.
@@ -112,7 +112,6 @@ class TestsDeclaration():
 
         #: list of TestAttributes(): list of each test's attributes.
         self.testcases = self._make_testcases()
-
 
     def _parse_testfile(self, filename):
         """Parses a JSON tests declaration from filename.

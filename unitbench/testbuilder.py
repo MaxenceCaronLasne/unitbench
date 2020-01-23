@@ -86,7 +86,7 @@ class UnitBenchBuilder():
                 raise UnitBenchAssertionError(
                     out_value, expected_value, message, round_idx)
 
-        def sim(dut, testcase):
+        def _sim(dut, testcase):
             in_q, exp_q = testcase.get_io_queues()
 
             round_idx = -1
@@ -110,15 +110,13 @@ class UnitBenchBuilder():
                         out_value = yield from _get_output(dut, signame)
                         _unitbench_assert(signame, out_value, expected_value,
                                           testname, testcase.tag, round_idx)
-                        # TODO: round_idx is not correct. Needs to write a
-                        #       custom exception for testing purpose.
 
                 yield
                 ticks_idx += 1
 
         dut = self._dut_class(*self._args)
 
-        run_simulation(dut, sim(dut, testcase),
+        run_simulation(dut, _sim(dut, testcase),
                        vcd_name=self._get_vcd_name(testname, testcase.tag,
                                                    outdir))
 
